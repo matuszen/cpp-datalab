@@ -3,13 +3,20 @@
     #include <windows.h>
 #endif
 
+#include "../src/matrix.cpp"
+
 int main(const int argc, const char** argv) try {
     #ifdef _WIN32
         SetConsoleOutputCP(CP_UTF8);
     #endif
 
-    std::cout << "Hello world!" << std::endl;
+    matrix A(3, 4);
+
+    A(2, 2) = 5;
+
+    std::cout << A(2, 2) << std::endl << A;
     
+    std::cout << std::endl;
     return 0;
 
 } catch (std::exception& e) {
