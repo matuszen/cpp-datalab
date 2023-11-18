@@ -22,23 +22,37 @@ class matrix {
         @param columns number of columns in Matrix */
         inline matrix(const unsigned long rows, const unsigned long columns);
 
-        // Matrix(const double*[]);
-
         /* Destructor for matrix object */
         inline ~matrix(void) noexcept;
 
         /* Fills the matrix with a given value
         @param value the value with which the matrix will be filled */
-        void fill(const double value) noexcept;
+        inline void fill(const double value) noexcept;
 
         /* Fills the matrix with `0` value */
-        void reset() noexcept;
+        inline void reset() noexcept;
 
-        double* operator[](unsigned long);
-        const double* operator[](unsigned long) const;
+        matrix& add(const double value);
+        matrix& add(const matrix& object);
 
-        double& operator()(unsigned long, unsigned long);
-        const double operator()(unsigned long, unsigned long) const;
+        matrix& sub(const double value);
+        matrix& sub(const matrix& object);
+
+        unsigned long rows() const noexcept;
+        unsigned long columns() const noexcept;
+
+        inline double* operator[](unsigned long);
+        inline const double* operator[](unsigned long) const;
+
+        inline double& operator()(unsigned long, unsigned long);
+        inline const double operator()(unsigned long, unsigned long) const;
+
+        friend matrix operator+(const matrix&, const double);
+        friend matrix operator+(const double, const matrix&);
+        friend matrix operator+(const matrix&, const matrix&);
+
+        friend matrix& operator+=(matrix&, const double);
+        friend matrix& operator+=(matrix&, const matrix&);
 
         friend std::ostream& operator<<(std::ostream&, const matrix&) noexcept;
 };

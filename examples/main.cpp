@@ -12,9 +12,9 @@ int main(const int argc, const char** argv) try {
 
     matrix A(3, 4);
 
-    A(2, 2) = 5;
+    A += 2;
 
-    std::cout << A(2, 2) << std::endl << A;
+    std::cout << A;
     
     std::cout << std::endl;
     return 0;

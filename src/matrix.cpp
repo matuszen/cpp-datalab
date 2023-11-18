@@ -22,8 +22,6 @@ inline matrix::matrix(unsigned long rows, unsigned long columns): _rows(rows), _
     this->reset();
 }
 
-// matrix::matrix(const double*[] content) {}
-
 inline matrix::~matrix(void) noexcept {
     for (unsigned long i = 0; i < _rows; ++i)
         delete[] _data[i];
@@ -31,17 +29,67 @@ inline matrix::~matrix(void) noexcept {
     delete[] _data;
 }
 
-void matrix::fill(const double value) noexcept {
+inline void matrix::fill(const double value) noexcept {
     for (unsigned long i = 0; i < _rows; ++i)
         for (unsigned long j = 0; j < _columns; ++j)
             _data[i][j] = value;
 }
 
-void matrix::reset(void) noexcept {
+inline void matrix::reset(void) noexcept {
     this->fill(0);
 }
 
-const double* matrix::operator[](unsigned long index) const {
+matrix& matrix::add(const double value) {
+    for (unsigned long i = 0; i < _rows; ++i)
+        for (unsigned long j = 0; j < _columns; j++)
+            this->_data[i][j] += value;
+
+    return *this;
+}
+
+matrix& matrix::add(const matrix& object) {
+    if (_rows != object._rows || _columns != object._columns)
+        throw std::invalid_argument(
+            "To add a matrix to a matrix, both must have the same dimensions"
+        );
+    
+    for (unsigned long i = 0; i < _rows; ++i)
+        for (unsigned long j = 0; j < _columns; j++)
+            this->_data[i][j] += object._data[i][j];
+    
+    return *this;
+}
+
+matrix& matrix::sub(const double value) {
+    for (unsigned long i = 0; i < _rows; ++i)
+        for (unsigned long j = 0; j < _columns; j++)
+            this->_data[i][j] -= value;
+
+    return *this;
+}
+
+matrix& matrix::sub(const matrix& object) {
+    if (_rows != object._rows || _columns != object._columns)
+        throw std::invalid_argument(
+            "To subtract a matrix to a matrix, both must have the same dimensions"
+        );
+    
+    for (unsigned long i = 0; i < _rows; ++i)
+        for (unsigned long j = 0; j < _columns; j++)
+            this->_data[i][j] -= object._data[i][j];
+    
+    return *this;
+}
+
+unsigned long matrix::rows() const noexcept {
+    return _rows;
+}
+
+unsigned long matrix::columns() const noexcept {
+    return _columns;
+}
+
+inline const double* matrix::operator[](unsigned long index) const {
     if (index < _rows)
         return _data[index];
     
@@ -49,7 +97,7 @@ const double* matrix::operator[](unsigned long index) const {
         throw std::out_of_range("Matrix index out of range");
 }
 
-double* matrix::operator[](unsigned long index) {
+inline double* matrix::operator[](unsigned long index) {
     if (index < _rows)
         return _data[index];
     
@@ -57,7 +105,7 @@ double* matrix::operator[](unsigned long index) {
         throw std::out_of_range("Matrix index out of range");
 }
 
-double& matrix::operator()(unsigned long row, unsigned long column) {
+inline double& matrix::operator()(unsigned long row, unsigned long column) {
     if (row >= _rows)
         throw std::out_of_range(
             "Matrix has " + std::to_string(_rows - 1) + " rows but you tried to call an " + std::to_string(row) + " row"
@@ -71,8 +119,37 @@ double& matrix::operator()(unsigned long row, unsigned long column) {
     return _data[row][column];
 }
 
-const double matrix::operator()(unsigned long row, unsigned long column) const {
+inline const double matrix::operator()(unsigned long row, unsigned long column) const {
     return this->operator()(row, column);
+}
+
+matrix operator+(const matrix& object, const double scalar) {
+    matrix buffer(object);
+    buffer.add(scalar);
+
+    return buffer;
+}
+
+matrix operator+(const double scalar, const matrix& object) {
+    matrix buffer(object);
+    buffer.add(scalar);
+    
+    return buffer;
+}
+
+matrix operator+(const matrix& first_object, const matrix& second_object) {
+    matrix buffer(first_object);
+    buffer.add(second_object);
+    
+    return buffer;
+}
+
+matrix& operator+=(matrix& object, const double scalar) {
+    return object.add(scalar);
+}
+
+matrix& operator+=(matrix& first_object, const matrix& second_object) {
+    return first_object.add(second_object);
 }
 
 std::ostream& operator<<(std::ostream& stream_out, const matrix& object) noexcept {
